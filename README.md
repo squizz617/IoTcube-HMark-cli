@@ -3,6 +3,7 @@ CLI implementation of HMark tool, which is used for vulnerable code clone detect
 
 ## Prerequisite
 python 2.7.x
+
 Java SE Runtime Environment (version 8 is recommended)
 
 ## Usage
