@@ -8,7 +8,7 @@ Java SE Runtime Environment (version 8 is recommended)
 
 ## Usage
 ```
-$ python hmark-cli.py [/path/to/program] [Abstraction Level (0 or 4)]
+$ python hmark-cli.py -p [/path/to/program] -lv [Abstraction Level]
 ```
 
 ## Issue Tracking
