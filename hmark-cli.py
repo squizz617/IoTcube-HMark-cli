@@ -1,28 +1,18 @@
 #! /usr/bin/env python2
 
-import urllib2
-import platform
 import sys
 import os
 import time
-from re import compile, findall
-import webbrowser
 from hashlib import md5
-
 from multiprocessing import Pool
-import subprocess
 import argparse
 import parseutility
+
 import version
 import get_cpu_count
 
 """ GLOBALS """
 currentVersion = version.version
-osName = ""
-bits = ""
-urlBase = "http://iotqv.korea.ac.kr/getbinaryversion/wf1/"
-urlDownload = "http://iotqv.korea.ac.kr/downloads"
-
 
 def parseFile_shallow_multi(f):
 	functionInstanceList = parseutility.parseFile_shallow(f, "GUI")
