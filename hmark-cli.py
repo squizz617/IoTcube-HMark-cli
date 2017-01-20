@@ -131,8 +131,15 @@ def main():
 	ap.add_argument("-lv", "--level", required = True,
 		help = "Abstraction level[0~4]")
 	args = vars(ap.parse_args())
-	if not args["path"].isdigit() and args['level'].isdigit():
-		generate(args['path'],int(args['level']))
+
+	if args['level'].isdigit():
+		lv = int(args['level'])
+		if lv == 0 or lv == 4:
+			generate(args['path'],lv)
+		else:
+			print "[Error] Wrong level selection."
+			print "Abstraction level: 0 (no abstraction) or 4 (full abstraction)"
+			sys.exit()
 	else:
 		print "USAGE: python hmark-cli.py -p [/path/to/program] -lv [Abstraction Level]"
 		print "Abstraction level: 0 (no abstraction) or 4 (full abstraction)"
