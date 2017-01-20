@@ -11,7 +11,7 @@ from hashlib import md5
 
 from multiprocessing import Pool
 import subprocess
-
+import argparse
 import parseutility
 import version
 import get_cpu_count
@@ -33,9 +33,7 @@ def parseFile_deep_multi(f):
 	return (f, functionInstanceList)
 
 
-def generate():
-	directory = sys.argv[1]
-	absLevel = int(sys.argv[2])
+def generate(directory, absLevel):
 	progress = 0
 	if directory.endswith('/'):
 		directory = directory[:-1]
@@ -71,7 +69,7 @@ def generate():
 		for idx, tup in enumerate(pool.imap_unordered(func, fileList)):
 			f = tup[0]
 			functionInstanceList = tup[1]
-			
+
 			fullName = proj + f.split(proj, 1)[1]
 			pathOnly = f.split(proj, 1)[1][1:]
 			progress = 100*(float)(idx + 1) / numFile
@@ -89,7 +87,7 @@ def generate():
 				absBody = parseutility.abstract(f, absLevel)[1]
 				absBody = parseutility.normalize(absBody)
 				funcLen = len(absBody)
-				
+
 				if funcLen > 50:
 					hashValue = md5(absBody).hexdigest()
 
@@ -137,12 +135,20 @@ def generate():
 
 
 def main():
-	if len(sys.argv) < 3:
-		print "USAGE: python hmark-cli.py [/path/to/program] [Abstraction Level]"
+	ap = argparse.ArgumentParser()
+	ap.add_argument("-p", "--path", required = True,
+		help = "Destination path")
+	ap.add_argument("-lv", "--level", required = True,
+		help = "Abstraction level[0~4]")
+	args = vars(ap.parse_args())
+	if not args["path"].isdigit() and args['level'].isdigit():
+		generate(args['path'],int(args['level']))
+	else:
+		print "USAGE: python hmark-cli.py -p [/path/to/program] -lv [Abstraction Level]"
 		print "Abstraction level: 0 (no abstraction) or 4 (full abstraction)"
 		sys.exit()
 
-	generate()
+
 
 
 """ EXECUTE """
