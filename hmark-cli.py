@@ -7,6 +7,7 @@ from hashlib import md5
 from multiprocessing import Pool
 import argparse
 import parseutility
+from subprocess import check_output
 
 import version
 import get_cpu_count
@@ -36,6 +37,12 @@ def generate(directory, absLevel):
 	projDic = {}
 	hashFileMap = {}
 
+	try:
+		rows, columns = check_output(['stty', 'size']).split()
+		# http://stackoverflow.com/questions/566746/how-to-get-console-window-width-in-python
+	except ValueError:
+		columns = 80
+
 	print "Loading source files... This may take a few minutes."
 
 	fileList = parseutility.loadSource(directory)
@@ -63,7 +70,10 @@ def generate(directory, absLevel):
 			fullName = proj + f.split(proj, 1)[1]
 			pathOnly = f.split(proj, 1)[1][1:]
 			progress = 100*(float)(idx + 1) / numFile
-			sys.stdout.write("\r%.2f%% %s                         " % (progress, fullName))
+			buf = "\r%.2f%% %s" % (progress, fullName)
+			buf += " " * (int(columns) - len(buf))
+			sys.stdout.write(buf)
+			# sys.stdout.write("\r%.2f%% %s                         " % (progress, fullName))
 			sys.stdout.flush()
 
 			numFunc += len(functionInstanceList)
