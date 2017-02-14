@@ -44,7 +44,7 @@ def setEnvironment(caller):
 		cwd = os.getcwd()
 		if osName == 'w':
 			# full_path = os.path.join(base_path, "FuncParser.exe")
-			javaCallCommand = os.path.join(cwd, "FuncParser.exe ")
+			javaCallCommand = os.path.join(cwd, "FuncParser-opt.exe ")
 
 		elif osName == 'l' or osName == "osx":
 			# full_path = os.path.join(base_path, "FuncParser.jar")
@@ -53,7 +53,7 @@ def setEnvironment(caller):
 
 	else:
 		if osName == 'w':
-			javaCallCommand = "FuncParser.exe "
+			javaCallCommand = "FuncParser-opt.exe "
 		elif osName == 'l' or osName == "osx":
 			javaCallCommand = "java -Xmx1024m -jar \"FuncParser-opt.jar\" "
 
@@ -204,10 +204,13 @@ def abstract(instance, level):
 
 	return (originalFunctionBody, abstractBody)
 
+delimiter = "\r\0?\r?\0\r"
 
 def parseFile_shallow(srcFileName, caller):
 	# this does not parse body.
 	global javaCallCommand
+	global delimiter
+
 	setEnvironment(caller)
 	javaCallCommand += "\"" + srcFileName + "\" 0"
 	functionInstanceList = []
@@ -217,17 +220,17 @@ def parseFile_shallow(srcFileName, caller):
 		print "Parser Error:", e
 		astString = ""
 
-	funcList = astString.split('\r\r\r')
+	funcList = astString.split(delimiter)
 	for func in funcList[1:]:
 		functionInstance = function(srcFileName)
 		elemsList = func.split('\n')[1:-1]
 		# print elemsList
-		if len(elemsList) > 10:
+		if len(elemsList) > 9:
 			functionInstance.parentNumLoc = int(elemsList[1])
 			functionInstance.name = elemsList[2]
 			functionInstance.lines = (int(elemsList[3].split('\t')[0]), int(elemsList[3].split('\t')[1]))
 			functionInstance.funcId = int(elemsList[4])
-			functionInstance.funcBody = ''.join(elemsList[10:])
+			functionInstance.funcBody = ''.join(elemsList[9:])
 			# print functionInstance.funcBody
 			# print "-------------------"
 
@@ -237,6 +240,7 @@ def parseFile_shallow(srcFileName, caller):
 
 def parseFile_deep(srcFileName, caller):
 	global javaCallCommand
+	global delimiter
 
 	setEnvironment(caller)
 	# this parses function definition plus body.
@@ -250,7 +254,7 @@ def parseFile_deep(srcFileName, caller):
 		print "Parser Error:", e
 		astString = ""
 
-	funcList = astString.split('\r\r\r')
+	funcList = astString.split(delimiter)
 	for func in funcList[1:]:
 		functionInstance = function(srcFileName)
 
